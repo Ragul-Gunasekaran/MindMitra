@@ -1,60 +1,94 @@
 import 'package:flutter/material.dart';
-import '../services/storage_service.dart';
-import '../models/reminder.dart';
+import '../core/theme/app_theme.dart';
 
-class MemoryDashboard extends StatefulWidget {
+class MemoryDashboard extends StatelessWidget {
   const MemoryDashboard({Key? key}) : super(key: key);
 
   @override
-  State<MemoryDashboard> createState() => _MemoryDashboardState();
-}
-
-class _MemoryDashboardState extends State<MemoryDashboard> {
-  final _storage = StorageService();
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: Colors.orange,
-        child: const Icon(Icons.add),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Today's Reminders", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+          const Text("My Memories", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+          const SizedBox(height: 24),
+          _buildMemoryCard(
+            context,
+            "Family Picnic 1998",
+            "A beautiful day out with the kids at the national park.",
+            Icons.photo_album,
+          ),
+          _buildMemoryCard(
+            context,
+            "Rohan's Graduation",
+            "My grandson graduating from college in 2024. So proud!",
+            Icons.school,
+          ),
+          _buildMemoryCard(
+            context,
+            "Our Old House",
+            "The house where we lived for 30 years and raised our family.",
+            Icons.house,
+          ),
+          const SizedBox(height: 32),
+          const Text("Family Members", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
           const SizedBox(height: 16),
-          ..._storage.reminders.map((r) => _buildReminderCard(r)).toList(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildFamilyMember("Rohan", "Grandson", Icons.person),
+              _buildFamilyMember("Priya", "Daughter", Icons.person_3),
+              _buildFamilyMember("Amit", "Son", Icons.person_4),
+            ],
+          ),
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.add_a_photo, size: 32),
+              label: const Text("Add New Memory"),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Add Memory feature coming soon.")));
+              },
+            ),
+          )
         ],
       ),
     );
   }
 
-  Widget _buildReminderCard(Reminder reminder) {
-    String timeStr = "${reminder.time.hour.toString().padLeft(2, '0')}:${reminder.time.minute.toString().padLeft(2, '0')}";
+  Widget _buildMemoryCard(BuildContext context, String title, String description, IconData icon) {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Icon(
-          reminder.completed ? Icons.check_circle : Icons.schedule,
-          color: reminder.completed ? Colors.green : Colors.orange,
-          size: 32,
+        contentPadding: const EdgeInsets.all(16.0),
+        leading: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: AppTheme.primaryOrange.withOpacity(0.2), shape: BoxShape.circle),
+          child: Icon(icon, size: 40, color: AppTheme.primaryOrange),
         ),
-        title: Text(timeStr, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        subtitle: Text(reminder.title, style: const TextStyle(fontSize: 18)),
-        trailing: reminder.completed ? null : OutlinedButton(
-          onPressed: () {
-            setState(() {
-              reminder.completed = true;
-            });
-          },
-          child: const Text("Done"),
-        ),
+        title: Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        subtitle: Text(description, style: const TextStyle(fontSize: 18, color: AppTheme.textLight)),
+        trailing: const Icon(Icons.play_circle_fill, size: 48, color: AppTheme.primaryOrange),
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Playing audio note for: $title")));
+        },
       ),
+    );
+  }
+
+  Widget _buildFamilyMember(String name, String relation, IconData icon) {
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 40,
+          backgroundColor: AppTheme.primaryOrange.withOpacity(0.2),
+          child: Icon(icon, size: 48, color: AppTheme.primaryOrange),
+        ),
+        const SizedBox(height: 8),
+        Text(name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+        Text(relation, style: const TextStyle(fontSize: 16, color: AppTheme.textLight)),
+      ],
     );
   }
 }

@@ -5,6 +5,7 @@ from datetime import datetime
 class UserBase(BaseModel):
     name: str
     age: int
+    role: str = 'ELDERLY'
 
 class UserCreate(UserBase):
     id: str
@@ -32,6 +33,7 @@ class CognitiveScoreBase(BaseModel):
     memory: int
     attention: int
     language: int
+    role: str = 'ELDERLY'
     math: int
     reaction: int
     problem_solving: int

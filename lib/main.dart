@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'widget/bottom_nav.dart';
-import 'constants/color.dart';
+import 'core/theme/app_theme.dart';
 import 'screens/home_dashboard.dart';
 import 'screens/games_dashboard.dart';
 import 'screens/progress_dashboard.dart';
@@ -20,10 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'MindMitra',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: primaryBackground,
-        primaryColor: primaryOrange,
-      ),
+      theme: AppTheme.lightTheme,
       home: const MyHomePage(title: 'MindMitra'),
     );
   }
@@ -64,17 +61,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        backgroundColor: primaryOrange,
         automaticallyImplyLeading: false,
-        titleTextStyle: const TextStyle(
-          color: Colors.white,
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
       ),
       body: widgetOptions.elementAt(selectedIndex),
       bottomNavigationBar: BottomNav(
-        colorBackground: primaryOrange,
+        colorBackground: AppTheme.primaryOrange,
         colorSelectedItem: Colors.black,
         colorUnselectedItem: Colors.white,
         function: (int index) => _onItemTapped(index),

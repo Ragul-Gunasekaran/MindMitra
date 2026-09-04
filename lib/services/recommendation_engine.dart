@@ -1,34 +1,28 @@
 import 'storage_service.dart';
-import '../models/game_result.dart';
+import 'dart:math';
 
 class RecommendationEngine {
   final _storage = StorageService();
 
-  GameType getRecommendedGame() {
-    var score = _storage.currentScore;
-    Map<GameType, int> scores = {
-      GameType.memory: score.memory,
-      GameType.attention: score.attention,
-      GameType.language: score.language,
-      GameType.math: score.math,
-      GameType.reaction: score.reaction,
-      GameType.jigsaw: score.problemSolving,
+  String getDailyMission() {
+    final scores = {
+      "Memory": _storage.currentScore.memory,
+      "Attention": _storage.currentScore.attention,
+      "Language": _storage.currentScore.language,
+      "Math": _storage.currentScore.math,
+      "Reaction": _storage.currentScore.reaction,
+      "Reasoning": _storage.currentScore.problemSolving,
     };
-    
-    var lowest = scores.entries.reduce((a, b) => a.value < b.value ? a : b);
-    return lowest.key;
-  }
-  
-  String getRecommendationTitle() {
-    GameType type = getRecommendedGame();
-    switch (type) {
-      case GameType.memory: return "Memory Game";
-      case GameType.attention: return "Attention Game";
-      case GameType.language: return "Language Game";
-      case GameType.math: return "Math Game";
-      case GameType.reaction: return "Reaction Game";
-      case GameType.jigsaw: return "Jigsaw Puzzle";
-      case GameType.recall: return "Memory Recall";
-    }
+
+    String weakestArea = "Memory";
+    int lowestScore = 100;
+    scores.forEach((key, value) {
+      if (value < lowestScore) {
+        lowestScore = value;
+        weakestArea = key;
+      }
+    });
+
+    return "Your $weakestArea score ($lowestScore) could use a boost! MindMitra recommends playing a $weakestArea activity today.";
   }
 }

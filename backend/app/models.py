@@ -8,6 +8,7 @@ class User(Base):
     id = Column(String, primary_key=True, index=True)
     name = Column(String)
     age = Column(Integer)
+    role = Column(String, default='ELDERLY')  # ELDERLY, CAREGIVER, ADMIN
     results = relationship("GameResult", back_populates="user")
     reminders = relationship("Reminder", back_populates="user")
     cognitive_score = relationship("CognitiveScore", back_populates="user", uselist=False)

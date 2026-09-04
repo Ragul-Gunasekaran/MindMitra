@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
+import '../core/theme/app_theme.dart';
 
 class CaregiverDashboard extends StatelessWidget {
   const CaregiverDashboard({Key? key}) : super(key: key);
@@ -8,68 +9,110 @@ class CaregiverDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     final storage = StorageService();
     final user = storage.currentUser;
-    final score = storage.currentScore;
     
     return Scaffold(
-      appBar: AppBar(title: const Text("Caregiver Dashboard"), backgroundColor: Colors.indigo, foregroundColor: Colors.white),
+      appBar: AppBar(title: const Text("Caregiver Dashboard")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(user.name, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-            Text("Age: ${user.age}", style: const TextStyle(fontSize: 18, color: Colors.grey)),
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundColor: AppTheme.primaryOrange.withOpacity(0.2),
+                  child: const Icon(Icons.person, size: 48, color: AppTheme.primaryOrange),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(user.name, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+                      Text("Age: ${user.age}  •  Status: Active", style: const TextStyle(fontSize: 18, color: AppTheme.textLight)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 24),
-            const Text("Today's Activity", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            _buildAlertCard(context),
+            const SizedBox(height: 24),
+            const Text("Daily Overview", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
             const SizedBox(height: 8),
             Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: const Padding(
-                padding: EdgeInsets.all(16.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text("Games completed:", style: TextStyle(fontSize: 16)), Text("3", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))]),
-                    Divider(),
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text("Average score:", style: TextStyle(fontSize: 16)), Text("76", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))]),
-                    Divider(),
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text("Training time:", style: TextStyle(fontSize: 16)), Text("18 min", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))]),
+                    _buildStatRow("Routine Completion", "86%", AppTheme.successGreen),
+                    const Divider(),
+                    _buildStatRow("Reminder Adherence", "92%", AppTheme.successGreen),
+                    const Divider(),
+                    _buildStatRow("Activities Completed", "4/5", AppTheme.primaryOrange),
+                    const Divider(),
+                    _buildStatRow("Current Mood", "Good ??", Colors.blue),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 24),
-            const Text("Performance Insight", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const Text("Cognitive Progress", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
             const SizedBox(height: 8),
             Card(
-              color: Colors.blue[50],
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.blue.withOpacity(0.5))),
+              color: AppTheme.primaryOrange.withOpacity(0.1),
               child: const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Icon(Icons.insights, color: Colors.blue, size: 32),
+                    Icon(Icons.trending_up, color: AppTheme.primaryOrange, size: 32),
                     SizedBox(width: 16),
-                    Expanded(child: Text("Memory performance has improved by 8% compared with the previous week.", style: TextStyle(fontSize: 16))),
+                    Expanded(child: Text("Memory performance has improved by 8% compared with the previous week.", style: TextStyle(fontSize: 18, color: AppTheme.textDark))),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 24),
-            const Text("Recent Sessions", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            ...storage.gameResults.take(3).map((result) => Card(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                title: Text(result.type.toString().split('.').last.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text("Score: ${result.score} • Accuracy: ${result.accuracy.toStringAsFixed(0)}%"),
-                trailing: const Text("Today", style: TextStyle(color: Colors.grey)),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.description, size: 32),
+                label: const Text("Generate Weekly Report"),
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Downloading report...")));
+                },
               ),
-            )).toList(),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildAlertCard(BuildContext context) {
+    return Card(
+      color: AppTheme.alertRed.withOpacity(0.1),
+      child: const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: AppTheme.alertRed, size: 32),
+            SizedBox(width: 16),
+            Expanded(child: Text("Missed Evening Medicine yesterday. Please check in.", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.alertRed))),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatRow(String label, String value, Color valueColor) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 18, color: AppTheme.textDark)),
+        Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: valueColor)),
+      ],
     );
   }
 }

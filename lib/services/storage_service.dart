@@ -11,7 +11,7 @@ class StorageService {
   factory StorageService() => _instance;
   StorageService._internal();
 
-  User currentUser = User(id: "1", name: "Anita Devi", age: 68);
+  User currentUser = User(id: "1", name: "Anita Devi", age: 68, role: "ELDERLY");
   
   CognitiveScore currentScore = CognitiveScore(
     memory: 55,
@@ -38,7 +38,7 @@ class StorageService {
       final response = await http.get(Uri.parse('$API_BASE_URL/api/users/${currentUser.id}')).timeout(const Duration(seconds: 3));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        currentUser = User(id: data['id'], name: data['name'], age: data['age']);
+        currentUser = User.fromJson(data);
       }
       
       final scoreResponse = await http.get(Uri.parse('$API_BASE_URL/api/users/${currentUser.id}/cognitive-score')).timeout(const Duration(seconds: 3));
