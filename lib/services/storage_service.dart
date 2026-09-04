@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'auth_service.dart' as import_auth;
 import '../models/user.dart';
 import '../models/cognitive_score.dart';
 import '../models/game_result.dart';
@@ -14,6 +15,16 @@ class StorageService {
   StorageService._internal();
 
   User currentUser = User(id: "1", name: "Anita Devi", age: 68, role: "ELDERLY");
+  void setCurrentUser(User user) {
+    currentUser = user;
+    init(); // reload data for this user
+  }
+
+  Future<void> clearUserData() async {
+    gameResults.clear();
+    reminders.clear();
+    // In a real app, clear shared_preferences for this user too
+  }
   
   CognitiveScore currentScore = CognitiveScore(
     memory: 55,
@@ -54,13 +65,13 @@ class StorageService {
 
   Future<void> fetchUserData() async {
     try {
-      final response = await http.get(Uri.parse('$API_BASE_URL/api/users/${currentUser.id}')).timeout(const Duration(seconds: 3));
+      final response = await http.get(Uri.parse('$API_BASE_URL/api/users/${currentUser.id}'), headers: {'Authorization': 'Bearer ${import_auth.AuthService().accessToken}'}).timeout(const Duration(seconds: 3));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         currentUser = User.fromJson(data);
       }
       
-      final scoreResponse = await http.get(Uri.parse('$API_BASE_URL/api/users/${currentUser.id}/cognitive-score')).timeout(const Duration(seconds: 3));
+      final scoreResponse = await http.get(Uri.parse('$API_BASE_URL/api/users/${currentUser.id}/cognitive-score'), headers: {'Authorization': 'Bearer ${import_auth.AuthService().accessToken}'}).timeout(const Duration(seconds: 3));
       if (scoreResponse.statusCode == 200) {
         final scoreData = jsonDecode(scoreResponse.body);
         currentScore = CognitiveScore(

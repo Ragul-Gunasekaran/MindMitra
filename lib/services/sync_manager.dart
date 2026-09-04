@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'auth_service.dart' as import_auth;
 import '../constants/base_url.dart';
 
 class SyncOperation {
@@ -78,6 +79,13 @@ class SyncManager {
     _updateStatus();
   }
 
+  Future<void> clearQueue() async {
+    _queue.clear();
+    await _saveQueue();
+    isOnline = false;
+    _updateStatus();
+  }
+
   void _updateStatus() {
     if (isSyncing) {
       _syncStatusController.add("? Syncing...");
@@ -110,7 +118,7 @@ class SyncManager {
   }
 
   Future<void> syncNow() async {
-    if (isSyncing) return;
+    if (isSyncing || import_auth.AuthService().isDemo) return;
     isSyncing = true;
     _updateStatus();
 
@@ -153,7 +161,10 @@ class SyncManager {
       if (op.entityType == 'GameResult') {
         final res = await http.post(
           Uri.parse('$API_BASE_URL/api/results'),
-          headers: {'Content-Type': 'application/json'},
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${import_auth.AuthService().accessToken}'
+          },
           body: jsonEncode(op.payload),
         ).timeout(const Duration(seconds: 5));
         return res.statusCode == 200 || res.statusCode == 201;

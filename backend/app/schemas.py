@@ -3,6 +3,7 @@ from typing import List, Optional, Dict
 from datetime import datetime
 
 class UserBase(BaseModel):
+    email: Optional[str] = None
     name: str
     age: int
     role: str = 'ELDERLY'
@@ -92,4 +93,20 @@ class AnalyticsSummary(BaseModel):
     active_days: int
     domains: Dict[str, float]
     mood_trend: str
+
+
+class AuthLogin(BaseModel):
+    email: str
+    password: str
+
+class AuthRegister(BaseModel):
+    email: str
+    password: str
+    name: str
+    age: int
+    role: str = 'ELDERLY'
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
 

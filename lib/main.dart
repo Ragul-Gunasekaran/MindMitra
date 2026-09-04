@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'widget/bottom_nav.dart';
 import 'core/theme/app_theme.dart';
+import 'core/config/accessibility.dart';
 import 'screens/home_dashboard.dart';
 import 'screens/games_dashboard.dart';
 import 'screens/wellness_dashboard.dart';
 import 'screens/routine_dashboard.dart';
-
 import 'screens/profile_dashboard.dart';
+import 'screens/auth/login_screen.dart';
 import 'services/storage_service.dart';
+import 'services/sync_manager.dart';
+import 'services/auth_service.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-import 'core/config/accessibility.dart';
-import 'services/sync_manager.dart';
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -24,6 +25,8 @@ class MyApp extends StatelessWidget {
       animation: AccessibilityConfig(),
       builder: (context, child) {
         return MaterialApp(
+          title: 'MindMitra',
+          debugShowCheckedModeBanner: false,
           builder: (context, child) {
             return MediaQuery(
               data: MediaQuery.of(context).copyWith(
@@ -33,11 +36,48 @@ class MyApp extends StatelessWidget {
               child: child!,
             );
           },
-      title: 'MindMitra',
-      debugShowCheckedModeBanner: false,
-      theme: AccessibilityConfig().highContrast ? AppTheme.highContrastTheme : AppTheme.lightTheme,
-      home: const MyHomePage(title: 'MindMitra'),
+          theme: AccessibilityConfig().highContrast ? AppTheme.highContrastTheme : AppTheme.lightTheme,
+          home: const AuthWrapper(),
+        );
+      },
     );
+  }
+}
+
+class AuthWrapper extends StatefulWidget {
+  const AuthWrapper({Key? key}) : super(key: key);
+  @override
+  _AuthWrapperState createState() => _AuthWrapperState();
+}
+
+class _AuthWrapperState extends State<AuthWrapper> {
+  bool _isLoading = true;
+  bool _isAuthenticated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initApp();
+  }
+
+  void _initApp() async {
+    AccessibilityConfig().init();
+    final auth = AuthService();
+    final success = await auth.tryAutoLogin();
+    if (success) {
+      StorageService().init();
+      SyncManager().init();
+    }
+    setState(() {
+      _isAuthenticated = success;
+      _isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return _isAuthenticated ? const MyHomePage(title: 'MindMitra') : const LoginScreen();
   }
 }
 
@@ -58,16 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
     const WellnessDashboard(),
     const ProfileDashboard(),
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    
-    AccessibilityConfig().init();
-    StorageService().init();
-    import('services/sync_manager.dart').then((m) => m.SyncManager().init());
-
-  }
 
   void _onItemTapped(int index) {
     setState(() {

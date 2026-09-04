@@ -1,167 +1,75 @@
-import 'dart:convert' show json;
-import 'package:brain_training/screens/auth/register_screen.dart';
-import 'package:brain_training/widget/logo_app.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart' as http;
-import 'package:brain_training/constants/color.dart';
-import 'package:brain_training/main.dart';
-import "package:brain_training/constants/icons.dart";
+import '../../core/theme/app_theme.dart';
+import '../../services/auth_service.dart';
+import '../../main.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({Key? key}) : super(key: key);
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  @override
-  void initState() {
-    super.initState();
+  final _emailCtrl = TextEditingController();
+  final _passCtrl = TextEditingController();
+  final _authService = AuthService();
+  bool _isLoading = false;
+
+  void _login() async {
+    setState(() => _isLoading = true);
+    final success = await _authService.login(_emailCtrl.text, _passCtrl.text);
+    setState(() => _isLoading = false);
+    if (success) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MyHomePage(title: "MindMitra")));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("We couldn't sign you in. Please check your email and password.")));
+    }
+  }
+
+  void _demoMode() async {
+    setState(() => _isLoading = true);
+    await _authService.loginDemo();
+    setState(() => _isLoading = false);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MyHomePage(title: "MindMitra")));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: primaryBackground,
-        ),
-        body: SafeArea(
-            child: Center(
-          child: Column(
+      appBar: AppBar(title: const Text("Welcome to MindMitra")),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(32.0),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text("Đăng nhập",
-                    style: TextStyle(
-                      fontSize: 50,
-                      color: primaryOrange,
-                      fontWeight: FontWeight.w700,
-                    )),
-                LogoApp(),
-                Column(
-                  children: [
-                    GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const MyHomePage(
-                                    title: "Brain Training",
-                                  ),
-                              fullscreenDialog: true));
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: blueFbBtn,
-                            boxShadow: const [
-                              BoxShadow(color: blueFbBtn, spreadRadius: 10),
-                            ],
-                          ),
-                          height: 50,
-                          width: 250,
-                          child: Row(mainAxisSize: MainAxisSize.min, children: [
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            SvgPicture.asset(
-                              facebookIcon,
-                              height: 30,
-                              width: 30,
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            const Text(
-                              "Tài khoản Facebook",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ]),
-                        )),
-                    GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const MyHomePage(
-                                    title: "Brain Training",
-                                  ),
-                              fullscreenDialog: true));
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 40, bottom: 50),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: redGgBtn,
-                            boxShadow: const [
-                              BoxShadow(color: redGgBtn, spreadRadius: 10),
-                            ],
-                          ),
-                          height: 50,
-                          width: 250,
-                          child: Row(mainAxisSize: MainAxisSize.min, children: [
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            SvgPicture.asset(
-                              googleIcon,
-                              height: 30,
-                              width: 30,
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            const Text(
-                              "Tài khoản Google",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ]),
-                        )),
-                  ],
+                const Icon(Icons.favorite, size: 80, color: AppTheme.primaryOrange),
+                const SizedBox(height: 32),
+                TextField(controller: _emailCtrl, decoration: const InputDecoration(labelText: "Email", border: OutlineInputBorder())),
+                const SizedBox(height: 16),
+                TextField(controller: _passCtrl, obscureText: true, decoration: const InputDecoration(labelText: "Password", border: OutlineInputBorder())),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _login,
+                  child: _isLoading ? const CircularProgressIndicator(color: Colors.white) : const Text("Sign In"),
                 ),
-                Column(
-                  children: [
-                    const Text(
-                      "Nếu bạn chưa có tài khoản?",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontStyle: FontStyle.italic,
-                        color: darkTextColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 10),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const RegisterScreen(),
-                              fullscreenDialog: true));
-                        },
-                        child: const Text(
-                          "Tạo tài khoản",
-                          style: TextStyle(
-                            fontSize: 20,
-                            decoration: TextDecoration.underline,
-                            color: primaryOrange,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
+                const SizedBox(height: 16),
+                TextButton(onPressed: () {}, child: const Text("Create an account", style: TextStyle(fontSize: 18))),
+                const Divider(height: 48),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.explore),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade200, foregroundColor: Colors.black),
+                  onPressed: _isLoading ? null : _demoMode,
+                  label: const Text("Continue in Demo Mode"),
                 )
-              ]),
-        )));
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
