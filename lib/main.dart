@@ -1,0 +1,78 @@
+import 'package:flutter/material.dart';
+import 'widget/bottom_nav.dart';
+import 'constants/color.dart';
+import 'screens/home_dashboard.dart';
+import 'screens/games_dashboard.dart';
+import 'screens/progress_dashboard.dart';
+import 'screens/memory_dashboard.dart';
+import 'screens/profile_dashboard.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'MindMitra',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        scaffoldBackgroundColor: primaryBackground,
+        primaryColor: primaryOrange,
+      ),
+      home: const MyHomePage(title: 'MindMitra'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int selectedIndex = 0;
+  List<Widget> widgetOptions = [
+    const HomeDashboard(),
+    const GamesDashboard(),
+    const ProgressDashboard(),
+    const MemoryDashboard(),
+    const ProfileDashboard(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+        backgroundColor: primaryOrange,
+        automaticallyImplyLeading: false,
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      body: widgetOptions.elementAt(selectedIndex),
+      bottomNavigationBar: BottomNav(
+        colorBackground: primaryOrange,
+        colorSelectedItem: Colors.black,
+        colorUnselectedItem: Colors.white,
+        function: (int index) => _onItemTapped(index),
+        selectedIndex: selectedIndex,
+      ),
+    );
+  }
+}
