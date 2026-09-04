@@ -20,7 +20,7 @@ class GamesDashboard extends StatelessWidget {
           const SizedBox(height: 24),
           Card(
             color: Colors.white,
-            side: const BorderSide(color: AppTheme.primaryOrange),
+            shape: RoundedRectangleBorder(side: const BorderSide(color: AppTheme.primaryOrange), borderRadius: BorderRadius.circular(20)),
             child: const Padding(
               padding: EdgeInsets.all(16.0),
               child: Row(
