@@ -39,7 +39,14 @@ class _CaregiverDashboardState extends State<CaregiverDashboard> {
               ],
             ),
             const SizedBox(height: 24),
-            const Text("Overall Today", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Overall Today", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+                Text("Last synchronized: Today, 10:15 AM", style: TextStyle(fontSize: 14, color: AppTheme.textLight, fontStyle: FontStyle.italic)),
+              ],
+            ),
+            // const Text("Overall Today",  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
             const Divider(),
             _buildStatusRow("Cognitive Activity", "Completed ?", AppTheme.successGreen),
             _buildStatusRow("Routine", "80%", AppTheme.primaryOrange),

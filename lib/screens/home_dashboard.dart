@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/sync_manager.dart';
 import 'package:flutter/semantics.dart';
 import '../core/theme/app_theme.dart';
 import '../core/config/accessibility.dart';
@@ -23,6 +24,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
   final _personalization = PersonalizationService();
   final _ai = AICompanionService();
   final _voice = VoiceService();
+  final _sync = SyncManager();
   final _config = AccessibilityConfig();
   bool _isListening = false;
   late Future<List<RecommendedActivity>> _recsFuture;
@@ -101,6 +103,30 @@ class _HomeDashboardState extends State<HomeDashboard> {
           const SizedBox(height: 32),
         ],
       ),
+    );
+  }
+
+  Widget _buildSyncStatus() {
+    return StreamBuilder<String>(
+      stream: _sync.syncStatusStream,
+      initialData: "? Everything is up to date",
+      builder: (context, snapshot) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: snapshot.data!.contains("Offline") ? Colors.grey.shade200 : AppTheme.successGreen.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Text(
+            snapshot.data ?? "",
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: snapshot.data!.contains("Offline") ? Colors.grey.shade700 : AppTheme.successGreen,
+            ),
+          ),
+        );
+      },
     );
   }
 

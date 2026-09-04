@@ -14,6 +14,7 @@ void main() {
 }
 
 import 'core/config/accessibility.dart';
+import 'services/sync_manager.dart';
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -61,7 +62,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    StorageService().fetchUserData();
+    
+    AccessibilityConfig().init();
+    StorageService().init();
+    import('services/sync_manager.dart').then((m) => m.SyncManager().init());
+
   }
 
   void _onItemTapped(int index) {

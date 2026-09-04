@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../services/storage_service.dart';
+import '../services/storage_service.dart';
 import '../core/theme/app_theme.dart';
 import '../services/voice_service.dart';
 
@@ -13,6 +15,9 @@ class _MemoryDashboardState extends State<MemoryDashboard> {
   bool _isListening = false;
 
   void _showAddMemoryDialog() {
+    final titleController = TextEditingController();
+    final descController = TextEditingController();
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -21,9 +26,9 @@ class _MemoryDashboardState extends State<MemoryDashboard> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const TextField(decoration: InputDecoration(labelText: "Memory Title", border: OutlineInputBorder())),
+              TextField(controller: titleController, decoration: const InputDecoration(labelText: "Memory Title", border: OutlineInputBorder())),
               const SizedBox(height: 16),
-              const TextField(decoration: InputDecoration(labelText: "What happened?", border: OutlineInputBorder()), maxLines: 3),
+              TextField(controller: descController, decoration: const InputDecoration(labelText: "What happened?", border: OutlineInputBorder()), maxLines: 3),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
