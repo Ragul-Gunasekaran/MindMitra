@@ -1,17 +1,34 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Text
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from datetime import datetime
-from .database import Base
+import datetime
+
+Base = declarative_base()
 
 class User(Base):
     __tablename__ = "users"
     id = Column(String, primary_key=True, index=True)
     name = Column(String)
     age = Column(Integer)
-    role = Column(String, default='ELDERLY')  # ELDERLY, CAREGIVER, ADMIN
-    results = relationship("GameResult", back_populates="user")
-    reminders = relationship("Reminder", back_populates="user")
-    cognitive_score = relationship("CognitiveScore", back_populates="user", uselist=False)
+    role = Column(String, default="ELDERLY")  # ELDERLY, CAREGIVER, ADMIN
+
+class CaregiverConnection(Base):
+    __tablename__ = "caregiver_connections"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    elderly_id = Column(String, ForeignKey("users.id"))
+    caregiver_id = Column(String, ForeignKey("users.id"))
+    relationship = Column(String)
+    status = Column(String, default="PENDING") # PENDING, ACTIVE, REJECTED
+    permissions = Column(String, default="ALL")
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+class CaregiverNote(Base):
+    __tablename__ = "caregiver_notes"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    caregiver_id = Column(String, ForeignKey("users.id"))
+    elderly_id = Column(String, ForeignKey("users.id"))
+    content = Column(Text)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
 class GameResult(Base):
     __tablename__ = "game_results"
@@ -21,21 +38,19 @@ class GameResult(Base):
     score = Column(Integer)
     accuracy = Column(Float)
     response_time = Column(Float)
-    difficulty = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    user = relationship("User", back_populates="results")
+    difficulty = Column(String, default="Medium")
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
 class CognitiveScore(Base):
     __tablename__ = "cognitive_scores"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(String, ForeignKey("users.id"), unique=True)
-    memory = Column(Integer, default=0)
-    attention = Column(Integer, default=0)
-    language = Column(Integer, default=0)
-    math = Column(Integer, default=0)
-    reaction = Column(Integer, default=0)
-    problem_solving = Column(Integer, default=0)
-    user = relationship("User", back_populates="cognitive_score")
+    memory = Column(Integer, default=50)
+    attention = Column(Integer, default=50)
+    language = Column(Integer, default=50)
+    math = Column(Integer, default=50)
+    reaction = Column(Integer, default=50)
+    problem_solving = Column(Integer, default=50)
 
 class Reminder(Base):
     __tablename__ = "reminders"
@@ -45,4 +60,4 @@ class Reminder(Base):
     time = Column(DateTime)
     category = Column(String)
     completed = Column(Boolean, default=False)
-    user = relationship("User", back_populates="reminders")
+

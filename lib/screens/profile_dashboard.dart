@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/theme/app_theme.dart';
 import '../services/storage_service.dart';
 import 'safety_dashboard.dart';
+import 'caregiver_dashboard.dart';
 
 class ProfileDashboard extends StatelessWidget {
   const ProfileDashboard({Key? key}) : super(key: key);
@@ -40,7 +41,7 @@ class ProfileDashboard extends StatelessWidget {
           _buildMenuButton(context, "Language Settings", Icons.language, () {
              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Language menu coming soon.")));
           }),
-          _buildMenuButton(context, "Caregiver Access", Icons.family_restroom, () {}),
+          _buildMenuButton(context, "Caregiver Portal", Icons.family_restroom, () { Navigator.push(context, MaterialPageRoute(builder: (context) => const CaregiverDashboard())); }),
           _buildMenuButton(context, "Help & Support", Icons.help, () {}),
         ],
       ),

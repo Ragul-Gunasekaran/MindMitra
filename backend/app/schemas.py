@@ -33,7 +33,6 @@ class CognitiveScoreBase(BaseModel):
     memory: int
     attention: int
     language: int
-    role: str = 'ELDERLY'
     math: int
     reaction: int
     problem_solving: int
@@ -60,3 +59,28 @@ class ReminderCreate(ReminderBase):
 class ReminderResponse(ReminderCreate):
     class Config:
         from_attributes = True
+
+class CaregiverConnectionCreate(BaseModel):
+    elderly_id: str
+    caregiver_id: str
+    relationship: str
+    
+class CaregiverConnectionResponse(CaregiverConnectionCreate):
+    id: int
+    status: str
+    permissions: str
+    created_at: datetime
+    class Config:
+        from_attributes = True
+
+class CaregiverNoteCreate(BaseModel):
+    caregiver_id: str
+    elderly_id: str
+    content: str
+    
+class CaregiverNoteResponse(CaregiverNoteCreate):
+    id: int
+    created_at: datetime
+    class Config:
+        from_attributes = True
+

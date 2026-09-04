@@ -116,3 +116,20 @@ def delete_reminder(reminder_id: str, db: Session = Depends(get_db)):
         db.delete(db_rem)
         db.commit()
     return {"status": "deleted"}
+
+@app.post("/api/caregivers/connections", response_model=schemas.CaregiverConnectionResponse)
+def create_connection(conn: schemas.CaregiverConnectionCreate, db: Session = Depends(get_db)):
+    db_conn = models.CaregiverConnection(**conn.model_dump())
+    db.add(db_conn)
+    db.commit()
+    db.refresh(db_conn)
+    return db_conn
+
+@app.get("/api/caregivers/{caregiver_id}/elderly", response_model=list[schemas.CaregiverConnectionResponse])
+def get_connected_elderly(caregiver_id: str, db: Session = Depends(get_db)):
+    return db.query(models.CaregiverConnection).filter(models.CaregiverConnection.caregiver_id == caregiver_id).all()
+
+@app.get("/api/users/{elderly_id}/caregivers", response_model=list[schemas.CaregiverConnectionResponse])
+def get_caregivers(elderly_id: str, db: Session = Depends(get_db)):
+    return db.query(models.CaregiverConnection).filter(models.CaregiverConnection.elderly_id == elderly_id).all()
+
