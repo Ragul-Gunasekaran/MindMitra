@@ -57,7 +57,7 @@ class _AnalyticsDashboardState extends State<AnalyticsDashboard> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return const Center(child: Text("Unable to load data."));
+                  return const Center(child: Padding(padding: EdgeInsets.all(16.0), child: Text("We couldn''t connect right now. Your saved information is still available.", style: TextStyle(fontSize: 18), textAlign: TextAlign.center)));
                 } else if (snapshot.hasData) {
                   final data = snapshot.data!;
                   return Column(
@@ -141,7 +141,7 @@ class _AnalyticsDashboardState extends State<AnalyticsDashboard> {
           const Spacer(),
           Text(trend, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: trendColor)),
           const SizedBox(width: 16),
-          Text(score >= 80 ? "Improving" : (score >= 70 ? "Stable" : "Needs Practice"), style: TextStyle(fontSize: 16, color: trendColor)),
+          Expanded(child: Text(textStatus, style: TextStyle(fontSize: 18, color: trendColor))),
         ],
       ),
     );

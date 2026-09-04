@@ -9,6 +9,49 @@ class AppTheme {
   static const Color alertRed = Color(0xFFE74C3C);
   static const Color cardBackground = Colors.white;
 
+  static ThemeData get highContrastTheme {
+    return ThemeData(
+      primaryColor: Colors.black,
+      scaffoldBackgroundColor: Colors.white,
+      colorScheme: const ColorScheme.light(
+        primary: Colors.black,
+        secondary: Colors.black87,
+        background: Colors.white,
+        error: Colors.redAccent,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.black,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white, size: 36),
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900),
+      ),
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: Colors.black),
+        displayMedium: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.black),
+        bodyLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: Colors.black),
+        bodyMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.black),
+        labelLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+          textStyle: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: const BorderSide(color: Colors.black, width: 2)),
+        ),
+      ),
+      cardTheme: CardTheme(
+        color: Colors.white,
+        elevation: 8,
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: const BorderSide(color: Colors.black, width: 3)),
+      ),
+      iconTheme: const IconThemeData(size: 40, color: Colors.black),
+    );
+  }
+
   static ThemeData get lightTheme {
     return ThemeData(
       primaryColor: primaryOrange,

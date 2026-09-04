@@ -13,15 +13,28 @@ void main() {
   runApp(const MyApp());
 }
 
+import 'core/config/accessibility.dart';
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return AnimatedBuilder(
+      animation: AccessibilityConfig(),
+      builder: (context, child) {
+        return MaterialApp(
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: TextScaler.linear(AccessibilityConfig().textScaleFactor),
+                boldText: AccessibilityConfig().highContrast,
+              ),
+              child: child!,
+            );
+          },
       title: 'MindMitra',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+      theme: AccessibilityConfig().highContrast ? AppTheme.highContrastTheme : AppTheme.lightTheme,
       home: const MyHomePage(title: 'MindMitra'),
     );
   }

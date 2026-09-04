@@ -28,7 +28,7 @@ class AICompanionService {
     
     if (query.contains("what should i do") || query.contains("recommend") || query.contains("activity")) {
       final recs = await _personalization.getDailyRecommendations();
-      return "I recommend trying ${recs.first.title}. ${recs.first.reason}";
+      return "Let''s try ${recs.first.title} today. ${recs.first.reason}";
     }
 
     if (query.contains("routine") || query.contains("reminders")) {

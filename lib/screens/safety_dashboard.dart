@@ -1,28 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import '../core/theme/app_theme.dart';
-import '../core/config/localization.dart';
 
 class SafetyDashboard extends StatelessWidget {
   const SafetyDashboard({Key? key}) : super(key: key);
 
-  void _showSosConfirmation(BuildContext context) {
+  void _triggerSOS(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text("Emergency SOS", style: TextStyle(color: AppTheme.alertRed, fontWeight: FontWeight.bold)),
-        content: const Text("Are you sure you want to trigger an emergency alert to your caregivers?"),
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.warning, color: AppTheme.alertRed, size: 40),
+            SizedBox(width: 16),
+            Text("Emergency SOS", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28)),
+          ],
+        ),
+        content: const Text("Do you want to notify your family and caregivers that you need help?", style: TextStyle(fontSize: 22)),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text("Cancel", style: TextStyle(fontSize: 20)),
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel", style: TextStyle(fontSize: 22, color: Colors.grey)),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.alertRed),
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.alertRed, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16)),
             onPressed: () {
-              Navigator.of(ctx).pop();
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Emergency Alert Sent!")));
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Emergency contacts notified successfully.", style: TextStyle(fontSize: 20)),
+                backgroundColor: AppTheme.alertRed,
+                duration: Duration(seconds: 5),
+              ));
             },
-            child: const Text("YES, HELP ME"),
+            child: const Text("Yes, Send Help", style: TextStyle(fontSize: 22)),
           ),
         ],
       ),
@@ -31,53 +41,60 @@ class SafetyDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.alertRed,
-              padding: const EdgeInsets.all(32),
+    return Scaffold(
+      appBar: AppBar(title: const Text("Safety & SOS"), backgroundColor: AppTheme.alertRed),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 32),
+            Semantics(
+              button: true,
+              label: "Emergency SOS Button. Tap to call for help.",
+              child: InkWell(
+                onTap: () => _triggerSOS(context),
+                borderRadius: BorderRadius.circular(100),
+                child: Container(
+                  width: 250,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    color: AppTheme.alertRed,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(color: AppTheme.alertRed.withOpacity(0.5), blurRadius: 20, spreadRadius: 10),
+                    ],
+                  ),
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.sos, size: 80, color: Colors.white),
+                      SizedBox(height: 8),
+                      Text("SOS", style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.white)),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            icon: const Icon(Icons.warning_amber_rounded, size: 48, color: Colors.white),
-            label: Text(AppLocalization().translate("sos_button"), style: const TextStyle(fontSize: 32, color: Colors.white)),
-            onPressed: () => _showSosConfirmation(context),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.successGreen,
-              padding: const EdgeInsets.all(24),
+            const SizedBox(height: 48),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text("Emergency Contacts", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
             ),
-            icon: const Icon(Icons.check_circle, size: 36, color: Colors.white),
-            label: const Text("I'm Safe (Check-in)", style: TextStyle(fontSize: 24, color: Colors.white)),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Caregiver notified that you are safe.")));
-            },
-          ),
-          const SizedBox(height: 32),
-          const Text("Emergency Contacts", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
-          const SizedBox(height: 16),
-          _buildContactCard(context, "Priya (Daughter)", "+91 9876543210"),
-          _buildContactCard(context, "Dr. Sharma", "+91 8765432109"),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContactCard(BuildContext context, String name, String phone) {
-    return Card(
-      child: ListTile(
-        leading: const Icon(Icons.contact_phone, size: 36, color: AppTheme.primaryOrange),
-        title: Text(name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        subtitle: Text(phone, style: const TextStyle(fontSize: 18)),
-        trailing: IconButton(
-          icon: const Icon(Icons.call, size: 36, color: AppTheme.successGreen),
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Calling $name...")));
-          },
+            const SizedBox(height: 16),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.person, size: 40, color: Colors.blue),
+                title: const Text("Priya (Daughter)", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                subtitle: const Text("Primary Contact", style: TextStyle(fontSize: 18)),
+                trailing: IconButton(
+                  icon: const Icon(Icons.phone, size: 36, color: AppTheme.successGreen),
+                  onPressed: () {},
+                  tooltip: "Call Priya",
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

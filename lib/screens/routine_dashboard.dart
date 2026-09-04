@@ -5,6 +5,29 @@ class RoutineDashboard extends StatelessWidget {
   const RoutineDashboard({Key? key}) : super(key: key);
 
   @override
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.alarm_off, size: 64, color: AppTheme.textLight),
+            const SizedBox(height: 16),
+            const Text("You don''t have any reminders yet.", style: TextStyle(fontSize: 22, color: AppTheme.textDark), textAlign: TextAlign.center),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.add),
+              label: const Text("Add Reminder"),
+              onPressed: () {},
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),

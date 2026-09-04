@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'accessibility_settings.dart';
 import '../core/theme/app_theme.dart';
 import '../services/storage_service.dart';
 import 'safety_dashboard.dart';
