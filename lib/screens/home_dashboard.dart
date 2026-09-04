@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'analytics_dashboard.dart';
+import 'reports_dashboard.dart';
 import '../services/storage_service.dart';
 import '../services/voice_service.dart';
 import '../services/recommendation_engine.dart';
@@ -110,6 +112,16 @@ class _HomeDashboardState extends State<HomeDashboard> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildStatRow(String label, String value, Color valueColor) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 18, color: AppTheme.textDark)),
+        Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: valueColor)),
+      ],
     );
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'analytics_dashboard.dart';
 import '../services/storage_service.dart';
 import '../core/theme/app_theme.dart';
 
@@ -114,7 +115,13 @@ class _CaregiverDashboardState extends State<CaregiverDashboard> {
         side: const BorderSide(color: AppTheme.primaryOrange),
       ),
       onPressed: () {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Opening $label...")));
+        
+        if (label == "Progress") {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const AnalyticsDashboard()));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Opening $label...")));
+        }
+
       },
     );
   }

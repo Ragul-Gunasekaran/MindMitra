@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict
 from datetime import datetime
 
 class UserBase(BaseModel):
@@ -83,4 +83,13 @@ class CaregiverNoteResponse(CaregiverNoteCreate):
     created_at: datetime
     class Config:
         from_attributes = True
+
+class AnalyticsSummary(BaseModel):
+    period: str
+    activity_count: int
+    average_accuracy: float
+    routine_completion: float
+    active_days: int
+    domains: Dict[str, float]
+    mood_trend: str
 
