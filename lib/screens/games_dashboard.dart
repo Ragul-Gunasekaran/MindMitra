@@ -1,47 +1,104 @@
 import 'package:flutter/material.dart';
-import '../games/memory_game.dart';
-import '../games/attention_game.dart';
-import '../games/jigsaw_game.dart';
-import '../games/reaction_game.dart';
-import '../games/language_game.dart';
-import '../games/math_game.dart';
-import '../games/recall_game.dart';
+import '../core/theme/app_theme.dart';
+import '../services/storage_service.dart';
+import '../services/recommendation_engine.dart';
 
 class GamesDashboard extends StatelessWidget {
   const GamesDashboard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    final recommendation = RecommendationEngine();
+    final score = StorageService().currentScore;
+
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
-      children: [
-        const Text("All Games", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 16),
-        _buildGameTile(context, "Memory Challenge", "Train your short-term memory", Icons.psychology, Colors.purple, const MemoryGameScreen()),
-        _buildGameTile(context, "Attention Test", "Improve your focus", Icons.center_focus_strong, Colors.orange, const AttentionGameScreen()),
-        _buildGameTile(context, "Jigsaw Puzzle", "Problem solving skills", Icons.extension, Colors.blue, const JigsawGameScreen()),
-        _buildGameTile(context, "Reaction Speed", "Test your reflexes", Icons.bolt, Colors.red, const ReactionGameScreen()),
-        _buildGameTile(context, "Memory Recall", "Remember details", Icons.history, Colors.purple[300]!, const RecallGameScreen()),
-        _buildGameTile(context, "Language Skills", "Word matching", Icons.sort_by_alpha, Colors.teal, const LanguageGameScreen()),
-        _buildGameTile(context, "Mathematics", "Simple arithmetic", Icons.calculate, Colors.indigo, const MathGameScreen()),
-      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Cognitive Training", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+          const SizedBox(height: 24),
+          Card(
+            color: AppTheme.primaryOrange.withOpacity(0.1),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Today's Mission", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+                  const SizedBox(height: 12),
+                  Text(recommendation.getDailyMission(), style: const TextStyle(fontSize: 18, color: AppTheme.textDark)),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Starting today's cognitive mission...")));
+                    },
+                    child: const Text("START MISSION"),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 32),
+          const Text("Your Cognitive Skills", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+          const SizedBox(height: 16),
+          _buildSkillBar("Memory", score.memory),
+          _buildSkillBar("Attention", score.attention),
+          _buildSkillBar("Reasoning", score.problemSolving),
+          _buildSkillBar("Language", score.language),
+          _buildSkillBar("Mathematics", score.math),
+          _buildSkillBar("Visual/Spatial", score.problemSolving),
+          _buildSkillBar("Reaction", score.reaction),
+          const SizedBox(height: 32),
+          const Text("Cognitive History", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+          const SizedBox(height: 16),
+          _buildHistoryStat("?? Cognitive Streak", "7 Days", AppTheme.primaryOrange),
+          _buildHistoryStat("Activities This Week", "12", Colors.blue),
+          _buildHistoryStat("Average Accuracy", "78%", AppTheme.successGreen),
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.assessment, size: 32),
+              label: const Text("Take Baseline Assessment"),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Starting baseline assessment...")));
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildGameTile(BuildContext context, String title, String subtitle, IconData icon, Color color, Widget screen) {
+  Widget _buildSkillBar(String label, int value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          SizedBox(width: 120, child: Text(label, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+          Expanded(
+            child: LinearProgressIndicator(
+              value: value / 100,
+              minHeight: 12,
+              backgroundColor: Colors.grey.shade300,
+              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryOrange),
+              borderRadius: BorderRadius.circular(6),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Text("$value%", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoryStat(String label, String value, Color color) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: CircleAvatar(backgroundColor: color.withOpacity(0.2), child: Icon(icon, color: color)),
-        title: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        subtitle: Text(subtitle),
-        trailing: const Icon(Icons.arrow_forward_ios),
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
-        },
+        title: Text(label, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        trailing: Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
       ),
     );
   }
