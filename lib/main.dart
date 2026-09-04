@@ -3,8 +3,9 @@ import 'widget/bottom_nav.dart';
 import 'core/theme/app_theme.dart';
 import 'screens/home_dashboard.dart';
 import 'screens/games_dashboard.dart';
-import 'screens/progress_dashboard.dart';
-import 'screens/memory_dashboard.dart';
+import 'screens/wellness_dashboard.dart';
+import 'screens/routine_dashboard.dart';
+
 import 'screens/profile_dashboard.dart';
 import 'services/storage_service.dart';
 
@@ -39,8 +40,8 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> widgetOptions = [
     const HomeDashboard(),
     const GamesDashboard(),
-    const ProgressDashboard(),
-    const MemoryDashboard(),
+    const RoutineDashboard(),
+    const WellnessDashboard(),
     const ProfileDashboard(),
   ];
 

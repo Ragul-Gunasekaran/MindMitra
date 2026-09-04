@@ -35,16 +35,16 @@ class _BottomNavState extends State<BottomNav> {
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.videogame_asset, size: 30),
-          label: 'Games',
+          icon: Icon(Icons.psychology, size: 30),
+          label: 'Cognitive',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.bar_chart, size: 30),
-          label: 'Progress',
+          icon: Icon(Icons.calendar_month, size: 30),
+          label: 'Routine',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.event_note, size: 30),
-          label: 'Memory',
+          icon: Icon(Icons.favorite, size: 30),
+          label: 'Wellness',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person, size: 30),

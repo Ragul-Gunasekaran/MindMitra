@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
+import '../services/voice_service.dart';
 import '../services/recommendation_engine.dart';
+import '../services/ai_companion_service.dart';
 import '../core/theme/app_theme.dart';
+import '../core/config/localization.dart';
 
 class HomeDashboard extends StatefulWidget {
   const HomeDashboard({Key? key}) : super(key: key);
@@ -12,6 +15,9 @@ class HomeDashboard extends StatefulWidget {
 class _HomeDashboardState extends State<HomeDashboard> {
   final _storage = StorageService();
   final _recommendation = RecommendationEngine();
+  final _ai = AICompanionService();
+  final _voice = VoiceService();
+  bool _isListening = false;
   String _selectedMood = "";
 
   void _recordMood(String mood) {
@@ -33,7 +39,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Good Morning, ${_storage.currentUser.name.split(' ').first} ??", style: AppTheme.lightTheme.textTheme.displayMedium),
+              Text(AppLocalization().translate("good_morning") + "," ${_storage.currentUser.name.split(' ').first} ??", style: AppTheme.lightTheme.textTheme.displayMedium),
               IconButton(
                 icon: const Icon(Icons.sos, color: AppTheme.alertRed, size: 48),
                 onPressed: () {
@@ -50,7 +56,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Today's Plan", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+                  const Text(AppLocalization().translate("todays_plan"), style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
                   const SizedBox(height: 12),
                   _buildRoutineItem(Icons.check_circle, "Morning Medicine", "Completed at 8:00 AM", AppTheme.successGreen),
                   _buildRoutineItem(Icons.check_circle, "Breakfast", "Completed at 8:30 AM", AppTheme.successGreen),
@@ -63,7 +69,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
             ),
           ),
           const SizedBox(height: 24),
-          const Text("How are you feeling?", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+          const Text(AppLocalization().translate("how_are_you_feeling"), style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -80,9 +86,25 @@ class _HomeDashboardState extends State<HomeDashboard> {
             width: double.infinity,
             child: ElevatedButton.icon(
               icon: const Icon(Icons.mic, size: 32),
-              label: const Text("Ask MindMitra"),
+              label: const Text(AppLocalization().translate("ask_mindmitra")),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Voice Assistant connecting...")));
+                
+                if (_isListening) {
+                  _voice.stopListening();
+                  setState(() => _isListening = false);
+                } else {
+                  _voice.speak("I am listening. How can I help?");
+                  setState(() => _isListening = true);
+                  _voice.startListening((text) {
+                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Heard: $text")));
+                  }).then((available) {
+                     if (!available) {
+                       setState(() => _isListening = false);
+                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Microphone not available on this device.")));
+                     }
+                  });
+                }
+
               },
             ),
           ),
