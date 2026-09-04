@@ -141,7 +141,7 @@ class _AnalyticsDashboardState extends State<AnalyticsDashboard> {
           const Spacer(),
           Text(trend, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: trendColor)),
           const SizedBox(width: 16),
-          Expanded(child: Text(textStatus, style: TextStyle(fontSize: 18, color: trendColor))),
+
         ],
       ),
     );
