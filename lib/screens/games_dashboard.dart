@@ -19,6 +19,31 @@ class GamesDashboard extends StatelessWidget {
           const Text("Cognitive Training", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
           const SizedBox(height: 24),
           Card(
+            color: Colors.white,
+            side: const BorderSide(color: AppTheme.primaryOrange),
+            child: const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    children: [
+                      Text("?? 5 Day Streak", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.primaryOrange)),
+                      Text("Current Streak", style: TextStyle(fontSize: 14, color: AppTheme.textLight)),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Text("4 / 5 days", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+                      Text("Weekly Goal", style: TextStyle(fontSize: 14, color: AppTheme.textLight)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Card(
             color: AppTheme.primaryOrange.withOpacity(0.1),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -49,12 +74,6 @@ class GamesDashboard extends StatelessWidget {
           _buildSkillBar("Mathematics", score.math),
           _buildSkillBar("Visual/Spatial", score.problemSolving),
           _buildSkillBar("Reaction", score.reaction),
-          const SizedBox(height: 32),
-          const Text("Cognitive History", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
-          const SizedBox(height: 16),
-          _buildHistoryStat("?? Cognitive Streak", "7 Days", AppTheme.primaryOrange),
-          _buildHistoryStat("Activities This Week", "12", Colors.blue),
-          _buildHistoryStat("Average Accuracy", "78%", AppTheme.successGreen),
           const SizedBox(height: 32),
           SizedBox(
             width: double.infinity,
@@ -90,15 +109,6 @@ class GamesDashboard extends StatelessWidget {
           const SizedBox(width: 16),
           Text("$value%", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         ],
-      ),
-    );
-  }
-
-  Widget _buildHistoryStat(String label, String value, Color color) {
-    return Card(
-      child: ListTile(
-        title: Text(label, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        trailing: Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
       ),
     );
   }
