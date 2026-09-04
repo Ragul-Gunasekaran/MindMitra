@@ -13,7 +13,7 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="MindMitra API")
 
-cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:8000,*").split(",")
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:8000,https://ragul-gunasekaran.github.io").split(",")
 # Do NOT use * for prod auth access, but keeping as string split for config simplicity
 app.add_middleware(
     CORSMiddleware,
