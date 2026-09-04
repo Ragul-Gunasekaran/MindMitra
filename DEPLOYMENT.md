@@ -10,7 +10,7 @@
 
 1. Sign in to [Render](https://render.com/).
 2. Create a new **Web Service**.
-3. Connect your GitHub repository (`Ragul-Gunasekaran/MindMintra`).
+3. Connect your GitHub repository (`Ragul-Gunasekaran/MindMitra`).
 4. Render will automatically detect the `render.yaml` configuration and apply the following:
    * **Build Command:** `pip install -r backend/requirements.txt`
    * **Start Command:** `cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT`
@@ -33,7 +33,7 @@ To deploy the frontend to point to this new API:
 
 The Flutter web frontend is automatically deployed via GitHub Actions (`.github/workflows/flutter_web.yml`) every time you push to the `main` branch. 
 The final URL is:
-`https://ragul-gunasekaran.github.io/MindMintra/`
+`https://ragul-gunasekaran.github.io/MindMitra/`
 
 ## 5. Health Check
 

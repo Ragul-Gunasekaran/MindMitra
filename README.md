@@ -59,7 +59,7 @@ Our **AI-powered adaptive cognitive training** system ensures the patient is alw
 
 ## Deployment & Live URLs
 
-? **Frontend (Live):** https://ragul-gunasekaran.github.io/MindMintra/
+? **Frontend (Live):** https://ragul-gunasekaran.github.io/MindMitra/
 
 *(Note: The backend requires manual account configuration to deploy on Render. See setup below.)*
 
