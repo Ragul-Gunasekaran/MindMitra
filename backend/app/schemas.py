@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional, Dict
 from datetime import datetime
 
@@ -19,8 +19,8 @@ class UserResponse(UserBase):
 class GameResultCreate(BaseModel):
     user_id: str
     game_type: str
-    score: int
-    accuracy: float
+    score: int = Field(ge=0)
+    accuracy: float = Field(ge=0, le=100)
     response_time: float
     difficulty: str
 
@@ -88,7 +88,7 @@ class CaregiverNoteResponse(CaregiverNoteCreate):
 class AnalyticsSummary(BaseModel):
     period: str
     activity_count: int
-    average_accuracy: float
+    average_accuracy: float = Field(ge=0, le=100)
     routine_completion: float
     active_days: int
     domains: Dict[str, float]
@@ -109,4 +109,23 @@ class AuthRegister(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str
+
+
+class FeedbackCreate(BaseModel):
+    type: str
+    message: str
+
+class FeedbackResponse(FeedbackCreate):
+    id: int
+    user_id: str
+    status: str
+    created_at: datetime
+    class Config:
+        from_attributes = True
+
+class AdminOverview(BaseModel):
+    total_elderly: int
+    total_caregivers: int
+    active_connections: int
+    cognitive_activities_completed: int
 

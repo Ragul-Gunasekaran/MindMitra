@@ -65,3 +65,22 @@ class Reminder(Base):
     category = Column(String)
     completed = Column(Boolean, default=False)
 
+
+class Feedback(Base):
+    __tablename__ = 'feedback'
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(String, ForeignKey('users.id'))
+    type = Column(String) # GENERAL, FEATURE, BUG, ACCESSIBILITY
+    message = Column(Text)
+    status = Column(String, default='OPEN') # OPEN, IN_REVIEW, RESOLVED
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+class AuditLog(Base):
+    __tablename__ = 'audit_logs'
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(String, ForeignKey('users.id'))
+    action = Column(String)
+    target_type = Column(String, nullable=True)
+    target_id = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+

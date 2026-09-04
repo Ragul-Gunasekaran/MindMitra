@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'auth/login_screen.dart';
+import 'admin_dashboard.dart';
+import 'support_center.dart';
+import 'privacy_center.dart';
 import 'accessibility_settings.dart';
 import '../core/theme/app_theme.dart';
 import '../services/storage_service.dart';

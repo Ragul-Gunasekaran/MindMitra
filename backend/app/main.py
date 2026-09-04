@@ -213,3 +213,68 @@ def get_user_report(user_id: str, period: str, current_user: models.User = Depen
         "insights": ["Activity has been consistent.", "Routine consistency is strong.", "Memory practice is improving."]
     }
 
+
+# ADMIN AND SUPPORT ENDPOINTS
+
+@app.get('/api/admin/overview', response_model=schemas.AdminOverview)
+def get_admin_overview(current_user: models.User = Depends(auth.require_role(['ADMIN'])), db: Session = Depends(get_db)):
+    elderly_count = db.query(models.User).filter(models.User.role == 'ELDERLY').count()
+    caregiver_count = db.query(models.User).filter(models.User.role == 'CAREGIVER').count()
+    active_connections = db.query(models.CaregiverConnection).filter(models.CaregiverConnection.status == 'ACTIVE').count()
+    activities = db.query(models.GameResult).count()
+    return schemas.AdminOverview(
+        total_elderly=elderly_count,
+        total_caregivers=caregiver_count,
+        active_connections=active_connections,
+        cognitive_activities_completed=activities
+    )
+
+@app.get('/api/admin/users', response_model=list[schemas.UserResponse])
+def get_all_users(current_user: models.User = Depends(auth.require_role(['ADMIN'])), db: Session = Depends(get_db)):
+    return db.query(models.User).all()
+
+@app.post('/api/feedback', response_model=schemas.FeedbackResponse)
+def submit_feedback(feedback: schemas.FeedbackCreate, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    db_feedback = models.Feedback(
+        user_id=current_user.id,
+        type=feedback.type,
+        message=feedback.message
+    )
+    db.add(db_feedback)
+    db.commit()
+    db.refresh(db_feedback)
+    return db_feedback
+
+@app.get('/api/feedback', response_model=list[schemas.FeedbackResponse])
+def get_feedback(current_user: models.User = Depends(auth.require_role(['ADMIN'])), db: Session = Depends(get_db)):
+    return db.query(models.Feedback).order_by(models.Feedback.created_at.desc()).all()
+
+@app.delete('/api/users/{user_id}')
+def delete_account(user_id: str, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    auth.authorize_access(user_id, current_user, db)
+    # A user can only delete themselves, unless ADMIN.
+    if current_user.role != 'ADMIN' and current_user.id != user_id:
+         raise HTTPException(status_code=403, detail='Cannot delete another user account')
+         
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+         raise HTTPException(status_code=404, detail='User not found')
+         
+    # Due to foreign keys, depending on cascade settings, manual deletion of child records might be needed.
+    db.query(models.GameResult).filter(models.GameResult.user_id == user_id).delete()
+    db.query(models.Reminder).filter(models.Reminder.user_id == user_id).delete()
+    db.query(models.CognitiveScore).filter(models.CognitiveScore.user_id == user_id).delete()
+    db.query(models.CaregiverConnection).filter(
+        (models.CaregiverConnection.elderly_id == user_id) | (models.CaregiverConnection.caregiver_id == user_id)
+    ).delete()
+    
+    db.delete(user)
+    db.commit()
+    
+    # Audit log
+    audit = models.AuditLog(user_id=current_user.id, action='DELETE_ACCOUNT', target_id=user_id)
+    db.add(audit)
+    db.commit()
+    
+    return {'status': 'deleted'}
+
