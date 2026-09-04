@@ -6,6 +6,7 @@ import 'screens/games_dashboard.dart';
 import 'screens/progress_dashboard.dart';
 import 'screens/memory_dashboard.dart';
 import 'screens/profile_dashboard.dart';
+import 'services/storage_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -45,6 +46,12 @@ class _MyHomePageState extends State<MyHomePage> {
     const MemoryDashboard(),
     const ProfileDashboard(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    StorageService().fetchUserData();
+  }
 
   void _onItemTapped(int index) {
     setState(() {

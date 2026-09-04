@@ -1,6 +1,1 @@
-const base_url = "https://be-mobile.vercel.app/api";
-const baseUrlLanguage = "$base_url/language";
-
-// outside API for language game to fetch random characters
-final Uri dictionaryUrl =
-    Uri.parse('https://vietnamese-wordlist.duyet.net/Viet74K.txt');
+const String API_BASE_URL = "http://localhost:8000"; // Update with Render URL in production
